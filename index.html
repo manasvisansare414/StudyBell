@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBell - My Study Space</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f3ff;
+            color: #25234a;
+        }
+
+        header {
+            background: #6c63ff;
+            color: white;
+            padding: 25px 15px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        nav {
+            background: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: #6c63ff;
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 18px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #00000010;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #5148d9;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #6c63ff;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin: 4px;
+        }
+
+        button:hover {
+            background: #5148d9;
+        }
+
+        #taskList {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        #taskList li {
+            background: #f4f3ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .timer {
+            font-size: 42px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>📚 StudyBell</h1>
+        <p>Your little space for big dreams!</p>
+    </header>
+
+    <nav>
+        <a href="#tasks">My Tasks</a>
+        <a href="#timer">Study Timer</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h2>Welcome, Student! 💜</h2>
+            <p>Plan your day. Focus on your goals. Keep learning.</p>
+        </section>
+
+        <section class="card" id="tasks">
+            <h2>📝 My Study Tasks</h2>
+
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter your study task..."
+            >
+
+            <button onclick="addTask()">Add Task +</button>
+
+            <ul id="taskList"></ul>
+        </section>
+
+        <section class="card" id="timer">
+            <h2>⏰ Focus Timer</h2>
+
+            <div class="timer" id="time">25:00</div>
+
+            <div style="text-align: center;">
+                <button onclick="startTimer()">Start</button>
+                <button onclick="pauseTimer()">Pause</button>
+                <button onclick="resetTimer()">Reset</button>
+            </div>
+
+            <p style="text-align:center; margin-top:15px;">
+                Focus for 25 minutes, then take a short break!
+            </p>
+        </section>
+
+        <section class="card" id="about">
+            <h2>🌟 About StudyBell</h2>
+            <p>
+                StudyBell helps students organize their study tasks
+                and focus better with a simple timer.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Made with 💜 by a future software developer!</p>
+    </footer>
+
+    <script>
+        function addTask() {
+            const input = document.getElementById("taskInput");
+            const task = input.value.trim();
+
+            if (task === "") {
+                alert("Please enter a task!");
+                return;
+            }
+
+            const li = document.createElement("li");
+            const taskText = document.createElement("span");
+            taskText.textContent = task;
+
+            const doneButton = document.createElement("button");
+            doneButton.textContent = "Done ✓";
+
+            doneButton.onclick = function () {
+                taskText.style.textDecoration = "line-through";
+                doneButton.disabled = true;
+                doneButton.textContent = "Completed!";
+            };
+
+            li.appendChild(taskText);
+            li.appendChild(doneButton);
+
+            document.getElementById("taskList").appendChild(li);
+            input.value = "";
+        }
+
+        let seconds = 25 * 60;
+        let timerInterval = null;
+
+        function updateDisplay() {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+
+            document.getElementById("time").textContent =
+                String(minutes).padStart(2, "0") + ":" +
+                String(remainingSeconds).padStart(2, "0");
+        }
+
+        function startTimer() {
+            if (timerInterval !== null) return;
+
+            timerInterval = setInterval(function () {
+                if (seconds > 0) {
+                    seconds--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert("Great job! Your study session is complete!");
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            seconds = 25 * 60;
+            updateDisplay();
+        }
+
+        updateDisplay();
+    </script>
+
+</body>
+</html>
